@@ -317,7 +317,7 @@ async function getPostsByTagName(tagName) {
 
 async function createTags(tagList) {
   if (tagList.length === 0) {
-    return;
+    return [];
   }
 
   const valuesStringInsert = tagList
@@ -372,6 +372,7 @@ async function createPostTag(postId, tagId) {
 
 async function addTagsToPost(postId, tagList) {
   try {
+    console.log(tagList);
     const createPostTagPromises = tagList.map((tag) =>
       createPostTag(postId, tag.id)
     );
