@@ -1,13 +1,13 @@
 function requireUser(req, res, next) {
-  try {
-    if (req.headers.authorization) {
-      next();
-    } else {
-      throw "You need to be signed in to do that.";
-    }
-  } catch (error) {
-    throw error;
+  if (!req.user) {
+    res.status(401);
+    next({
+      name: "MissingUserError",
+      message: "You must be logged in to perform this action",
+    });
   }
+
+  next();
 }
 
 module.exports = {
