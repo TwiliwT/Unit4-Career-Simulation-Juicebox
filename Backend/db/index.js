@@ -154,6 +154,24 @@ async function getUserByUsernameRegister(username) {
   }
 }
 
+//Did this.
+async function deletePost(postId) {
+  try {
+    await deletePostTag(postId);
+
+    await client.query(
+      `
+      DELETE FROM posts WHERE id=$1
+      `,
+      [postId]
+    );
+
+    return;
+  } catch (error) {
+    throw error;
+  }
+}
+
 /**
  * POST Methods
  */
@@ -263,11 +281,12 @@ async function getPostById(postId) {
     );
 
     if (!post) {
-      throw {
-        name: "PostNotFoundError",
-        message: "Could not find a post with that postId",
-      };
+      const error = null;
+
+      return error;
     }
+
+    console.log(post);
 
     const { rows: tags } = await client.query(
       `
@@ -397,6 +416,22 @@ async function createPostTag(postId, tagId) {
   }
 }
 
+//Did this.
+async function deletePostTag(postId) {
+  try {
+    await client.query(
+      `
+      DELETE FROM 
+      post_tags where "postId"=$1
+      `,
+      [postId]
+    );
+    return;
+  } catch (error) {
+    throw error;
+  }
+}
+
 async function addTagsToPost(postId, tagList) {
   try {
     console.log(tagList);
@@ -443,4 +478,5 @@ module.exports = {
   getAllTags,
   createPostTag,
   addTagsToPost,
+  deletePost,
 };

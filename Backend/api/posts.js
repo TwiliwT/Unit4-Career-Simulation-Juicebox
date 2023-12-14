@@ -3,7 +3,13 @@ const postsRouter = express.Router();
 
 const { requireUser } = require("./utils");
 
-const { createPost, getAllPosts, updatePost, getPostById } = require("../db");
+const {
+  createPost,
+  getAllPosts,
+  updatePost,
+  getPostById,
+  deletePost,
+} = require("../db");
 
 postsRouter.get("/", async (req, res, next) => {
   try {
@@ -114,7 +120,32 @@ postsRouter.patch("/:postId", requireUser, async (req, res, next) => {
 });
 
 postsRouter.delete("/:postId", requireUser, async (req, res, next) => {
-  res.send({ message: "under construction" });
+  const postId = req.params.postId;
+
+  const post = await getPostById(postId);
+
+  //I tried using this piece of code inside the getPostById funtion but it was causing the server to crash to i moved it here.
+  if (!post) {
+    next({
+      name: "PostNotFoundError",
+      message: "Post does not exist.",
+    });
+  }
+
+  try {
+    if (post.author.id === req.user.id) {
+      await deletePost(postId);
+
+      res.send({ status: "Success", message: "Post was deleted successfully" });
+    } else {
+      next({
+        name: "UnauthorizedUserError",
+        message: "You cannot delete a post that is not yours",
+      });
+    }
+  } catch ({ name, message }) {
+    next({ name, message });
+  }
 });
 
 module.exports = postsRouter;
