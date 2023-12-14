@@ -127,6 +127,33 @@ async function getUserByUsername(username) {
   }
 }
 
+// Did this
+async function getUserByUsernameRegister(username) {
+  try {
+    const {
+      rows: [user],
+    } = await client.query(
+      `
+      SELECT *
+      FROM users
+      WHERE username=$1
+    `,
+      [username]
+    );
+
+    if (user) {
+      throw {
+        name: "UserAlreadyExistsError",
+        message: "A user with that username already exists",
+      };
+    }
+
+    return user;
+  } catch (error) {
+    throw error;
+  }
+}
+
 /**
  * POST Methods
  */
@@ -405,6 +432,7 @@ module.exports = {
   getAllUsers,
   getUserById,
   getUserByUsername,
+  getUserByUsernameRegister,
   getPostById,
   createPost,
   updatePost,

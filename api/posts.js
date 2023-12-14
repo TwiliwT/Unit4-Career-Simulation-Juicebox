@@ -39,21 +39,21 @@ postsRouter.get("/:postid", async (req, res, next) => {
     const post = await getPostById(postId);
 
     if (!post.active) {
-      console.log(post);
-      throw post;
+      console.log("test1");
+      throw new error("test");
     } else if (req.user && post.author.id !== req.user.id) {
-      console.log(post);
-      throw post;
+      console.log("test2wwww");
+      throw new Error("test");
     }
 
     res.send(post);
-  } catch ({ name, message }) {
-    next({ name, message });
+  } catch (error) {
+    next(error);
   }
 });
 
 postsRouter.post("/", requireUser, async (req, res, next) => {
-  const { title, content = "", tags} = req.body;
+  const { title, content = "", tags } = req.body;
 
   const postData = {};
 
